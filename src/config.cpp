@@ -20,5 +20,6 @@ unsigned long lastTasmotaCmd  = 0;
 unsigned long lastTasmotaPoll = 0;
 uint8_t       currentScreen   = 0;
 unsigned long lastButtonPress  = 0;
+unsigned long lastSnakeStep    = 0;
 String        apSSID           = "";
 String        apPass           = "";

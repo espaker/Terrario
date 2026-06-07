@@ -59,7 +59,7 @@ void loop() {
   if (digitalRead(PIN_BUTTON) == LOW) {
     if (millis() - lastButtonPress > DEBOUNCE_MS) {
       lastButtonPress = millis();
-      currentScreen = (currentScreen + 1) % 3;
+      currentScreen = (currentScreen + 1) % 4;
       updateDisplay();
     }
   }
@@ -68,6 +68,12 @@ void loop() {
       millis() - lastTasmotaPoll >= TASMOTA_POLL_INT) {
     lastTasmotaPoll = millis();
     tasmotaPollStatus();
+  }
+
+  if (currentScreen == 3 && millis() - lastSnakeStep >= SNAKE_INTERVAL) {
+    lastSnakeStep = millis();
+    snakeStep();
+    updateDisplay();
   }
 
   if (millis() - lastRead >= READ_INTERVAL) {

@@ -15,7 +15,7 @@ Terrario/
     ├── eeprom_storage.h/cpp# persistência de WiFi e IP Tasmota
     ├── tasmota.h / .cpp    # comunicação HTTP com o SA-01
     ├── control.h / .cpp    # lógica de controle (fan, umidificador, lâmpada)
-    ├── display.h / .cpp    # OLED SSD1306 — 3 telas + ícones PROGMEM
+    ├── display.h / .cpp    # OLED SSD1306 — 4 telas + ícones + animação PROGMEM
     └── web.h / .cpp        # servidor HTTP, dashboard e API JSON
 ```
 
@@ -39,6 +39,12 @@ Terrario/
 | Capacitor | 330µF 16V | Filtro fan |
 | Botão | Chave táctil | Navegação telas OLED |
 | Fonte | 5V 2A USB | Alimentação geral |
+
+---
+
+## Diagrama de circuito
+
+![Diagrama de circuito](docs/diagram.png)
 
 ---
 
@@ -165,19 +171,19 @@ Poll do status real a cada 15s. Correção automática se estado real ≠ deseja
 
 ## Display OLED — Telas
 
-Navegação por botão táctil em D3. Indicador de tela: 3 círculos no canto superior direito (●○○ / ○●○ / ○○●).
+Navegação por botão táctil em D3. Indicador de tela: grade 2×2 de quadradinhos no canto superior direito (quadrado preenchido = tela ativa).
 
 ### Tela 0 — Status (padrão)
 ```
-[🌡] 23.4C         ●○○
-[💧] 80.5%
+[🌡] 23.4C         ▣□
+[💧] 80.5%         □□
 [🌀]ON [〰]ON [🔥]OK
 ```
 
 ### Tela 1 — Setpoints
 ```
-Tmin: 24.0C        ○●○
-Tmax: 32.0C
+Tmin: 24.0C        □▣
+Tmax: 32.0C        □□
 Tcrit:36.0C   Lamp:
 Hmin: 60%     desej:ON
 Hmax: 80% +/-5 real:ON
@@ -185,11 +191,23 @@ Hmax: 80% +/-5 real:ON
 
 ### Tela 2 — Rede
 ```
-[WiFi] WiFi        ○○●
-SSID:
+[WiFi] WiFi        □□
+SSID:              ▣□
 MinhaRede
 IP: 192.168.x.x
 SA01: 192.168.100.87
+```
+
+### Tela 3 — Animação
+Zona amarela (y 0–15): "Lucifer"
+Zona azul (y 16–63): animação de 14 frames do spritesheet da cobra, atualizada a cada 250ms. Bitmaps convertidos em PROGMEM no `display.cpp`.
+
+```
+Lucifer            □□
+                   □▣
+  ╔═══════════╗
+  ║  ~ cobra~ ║
+  ╚═══════════╝
 ```
 
 ---
