@@ -21,5 +21,7 @@ unsigned long lastTasmotaPoll = 0;
 uint8_t       currentScreen   = 0;
 unsigned long lastButtonPress  = 0;
 unsigned long lastSnakeStep    = 0;
+unsigned long lastWifiRetry    = 0;
+bool          wifiRetrying     = false;
 String        apSSID           = "";
 String        apPass           = "";

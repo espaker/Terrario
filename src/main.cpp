@@ -24,6 +24,7 @@ void setup() {
   }
 
   loadCredentials();
+  loadSetpoints();
 
   String mac = WiFi.macAddress();
   mac.replace(":", "");
@@ -32,6 +33,7 @@ void setup() {
   apPass  = "Lucifer_"     + mac.substring(8, 12);
 
   if (strlen(savedSSID) > 0) {
+    WiFi.setAutoReconnect(true);
     WiFi.mode(WIFI_STA);
     WiFi.begin(savedSSID, savedPass);
     unsigned long t = millis();
@@ -62,6 +64,27 @@ void loop() {
       currentScreen = (currentScreen + 1) % 4;
       updateDisplay();
     }
+  }
+
+  if (strlen(savedSSID) > 0 && WiFi.status() != WL_CONNECTED) {
+    if (!wifiRetrying && millis() - lastWifiRetry >= WIFI_RETRY_INT) {
+      wifiRetrying  = true;
+      lastWifiRetry = millis();
+      WiFi.mode(WIFI_AP_STA);
+      WiFi.softAP(apSSID.c_str(), apPass.c_str());
+      WiFi.begin(savedSSID, savedPass);
+    } else if (wifiRetrying && millis() - lastWifiRetry >= WIFI_RETRY_TO) {
+      wifiRetrying = false;
+      WiFi.mode(WIFI_AP);
+      WiFi.softAP(apSSID.c_str(), apPass.c_str());
+    }
+  }
+  if (wifiRetrying && WiFi.status() == WL_CONNECTED) {
+    wifiRetrying = false;
+    WiFi.mode(WIFI_STA);
+    Serial.printf("Reconectado! IP: %s\n", WiFi.localIP().toString().c_str());
+    tasmotaPollStatus();
+    updateDisplay();
   }
 
   if (WiFi.status() == WL_CONNECTED &&

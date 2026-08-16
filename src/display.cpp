@@ -856,8 +856,8 @@ void snakeStep() {
 
 static void screenSnake() {
   oled.setTextSize(2);
-  oled.setCursor(22, 0);
-  oled.print("Lucifer");
+  oled.setCursor(16, 0);
+  oled.print("Princeso");
   oled.drawBitmap(0, 16, snake_frames[snake_frame], 128, 48, SSD1306_WHITE);
 }
 

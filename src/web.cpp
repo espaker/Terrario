@@ -130,16 +130,20 @@ static void handleRoot() {
 }
 
 static void handleSetpoints() {
-  if (server.hasArg("tempMin"))  tempMin  = server.arg("tempMin").toFloat();
-  if (server.hasArg("tempMax"))  tempMax  = server.arg("tempMax").toFloat();
-  if (server.hasArg("tempCrit")) tempCrit = server.arg("tempCrit").toFloat();
-  if (server.hasArg("humMin"))   humMin   = server.arg("humMin").toFloat();
-  if (server.hasArg("humMax"))   humMax   = server.arg("humMax").toFloat();
-  if (server.hasArg("humHyst"))  humHyst  = server.arg("humHyst").toFloat();
+  auto argf = [&](const char* k, float& v) {
+    if (server.hasArg(k) && server.arg(k).length() > 0) v = server.arg(k).toFloat();
+  };
+  argf("tempMin",  tempMin);
+  argf("tempMax",  tempMax);
+  argf("tempCrit", tempCrit);
+  argf("humMin",   humMin);
+  argf("humMax",   humMax);
+  argf("humHyst",  humHyst);
   if (server.hasArg("tip") && server.arg("tip").length() > 0) {
     server.arg("tip").toCharArray(tasmotaIP, 16);
     saveCredentials(savedSSID, savedPass, server.arg("tip"));
   }
+  saveSetpoints();
   server.sendHeader("Location", "/");
   server.send(302, "text/plain", "");
 }
@@ -171,7 +175,8 @@ static void handleApi() {
   json += "\"tempMax\":"    + String(tempMax,  1) + ",";
   json += "\"tempCrit\":"   + String(tempCrit, 1) + ",";
   json += "\"humMin\":"     + String(humMin,   0) + ",";
-  json += "\"humMax\":"     + String(humMax,   0);
+  json += "\"humMax\":"     + String(humMax,   0) + ",";
+  json += "\"humHyst\":"    + String(humHyst,  0);
   json += "}";
   server.send(200, "application/json", json);
 }
